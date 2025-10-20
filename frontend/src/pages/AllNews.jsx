@@ -10,7 +10,7 @@ const AllNews = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await axios.get(`${API_URL}/news.php?action=read`);
+        const response = await axios.get(`${API_URL}/news`);
         setNews(response.data);
       } catch (error) {
         console.error("Erro ao buscar notícias:", error);

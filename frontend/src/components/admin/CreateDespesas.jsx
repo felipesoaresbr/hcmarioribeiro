@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaFileContract, FaXmark } from "react-icons/fa6";
 import { API_URL } from "../../config";
+import axios from "axios";
 
 const CreateDespesas = ({ onClose, existingDespesas, onSuccess }) => {
   const [title, setTitle] = useState("");
@@ -16,6 +17,11 @@ const CreateDespesas = ({ onClose, existingDespesas, onSuccess }) => {
     }
   }, [existingDespesas]);
 
+  const getCsrfToken = async () => {
+    const res = await axios.get(`${API_URL}/csrf-token`, { withCredentials: true });
+    return res.data.csrfToken;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -27,23 +33,12 @@ const CreateDespesas = ({ onClose, existingDespesas, onSuccess }) => {
     };
 
     try {
-      let response;
-
+      const csrfToken = await getCsrfToken();
       if (existingDespesas) {
-        // Edição
-        response = await fetch(`${API_URL}/despesas.php?action=update`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include", // ✅ Envia cookies (inclui HttpOnly token)
-          body: JSON.stringify({
-            id: existingDespesas.id,
-            ...payload,
-          }),
-        });
-
-        if (!response.ok) throw new Error("Erro ao atualizar despesa");
+        await axios.post(`${API_URL}/despesas/update/${existingDespesas.id}`, payload, {
+          withCredentials: true,
+          headers: { "X-CSRF-Token": csrfToken },
+      });
 
         if (onSuccess) {
           onSuccess({
@@ -54,17 +49,10 @@ const CreateDespesas = ({ onClose, existingDespesas, onSuccess }) => {
           });
         }
       } else {
-        // Criação
-        response = await fetch(`${API_URL}/despesas.php?action=create`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include", // ✅ Envia cookies (inclui HttpOnly token)
-          body: JSON.stringify(payload),
+        await axios.post(`${API_URL}/despesas/create`, payload, {
+          withCredentials: true,
+          headers: { "X-CSRF-Token": csrfToken },
         });
-
-        if (!response.ok) throw new Error("Erro ao criar despesa");
 
         onClose();
       }
@@ -126,9 +114,8 @@ const CreateDespesas = ({ onClose, existingDespesas, onSuccess }) => {
 
         <button
           type="submit"
-          className={`mt-6 bg-blue-600 text-white px-6 py-2 rounded-lg cursor-pointer hover:bg-blue-700 transition-all text-lg w-fit self-end ${
-            loading ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          className={`mt-6 bg-blue-600 text-white px-6 py-2 rounded-lg cursor-pointer hover:bg-blue-700 transition-all text-lg w-fit self-end ${loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           disabled={loading}
         >
           {loading
@@ -136,8 +123,8 @@ const CreateDespesas = ({ onClose, existingDespesas, onSuccess }) => {
               ? "Atualizando..."
               : "Salvando..."
             : existingDespesas
-            ? "Atualizar"
-            : "Salvar"}
+              ? "Atualizar"
+              : "Salvar"}
         </button>
       </form>
     </main>

@@ -11,8 +11,6 @@ const NewsList = ({ onClose }) => {
   const [editingNews, setEditingNews] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
 
-  const token = localStorage.getItem("token");
-
   const formatDescription = (html, maxLength = 50) => {
     if (!html) return "";
     const strippedText = html.replace(/<[^>]*>/g, "");
@@ -21,17 +19,20 @@ const NewsList = ({ onClose }) => {
       : strippedText;
   };
 
+  const getCsrfToken = async () => {
+    const res = await axios.get(`${API_URL}/csrf-token`, { withCredentials: true });
+    return res.data.csrfToken;
+  };
+
   const handleDelete = useCallback(
     async (id) => {
       if (confirmDelete === id) {
         clearTimeout(confirmTimeoutRef.current);
         try {
-          await axios.delete(`${API_URL}/news.php?action=delete`, {
-            data: { id: id },
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
+          const csrfToken = await getCsrfToken();
+          await axios.delete(`${API_URL}/news/delete/${id}`, {
+            withCredentials: true,
+            headers: { "X-CSRF-Token": csrfToken },
           });
           setNoticias((prev) => prev.filter((noticia) => noticia.id !== id));
           setConfirmDelete(null);
@@ -44,7 +45,7 @@ const NewsList = ({ onClose }) => {
         confirmTimeoutRef.current = setTimeout(() => setConfirmDelete(null), 3000);
       }
     },
-    [confirmDelete, token]
+    [confirmDelete]
   );
 
   const handleEdit = (noticia) => {
@@ -60,22 +61,16 @@ const NewsList = ({ onClose }) => {
 
   const refreshNews = useCallback(async () => {
     try {
-      const response = await axios.get(`${API_URL}/news.php?action=read`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(`${API_URL}/news`, { withCredentials: true });
       setNoticias(response.data);
     } catch (error) {
       console.error("Erro ao buscar notícias:", error);
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     refreshNews();
-    return () => {
-      clearTimeout(confirmTimeoutRef.current);
-    };
+    return () => clearTimeout(confirmTimeoutRef.current);
   }, [refreshNews]);
 
   return (

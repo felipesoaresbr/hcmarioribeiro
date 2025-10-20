@@ -8,13 +8,8 @@ const Despesas = () => {
     useEffect(() => {
         const fetchDespesas = async () => {
             try {
-                const token = localStorage.getItem('token'); // Ajuste se necessário
 
-                const response = await axios.get(`${API_URL}/despesas.php?action=read`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
+                const response = await axios.get(`${API_URL}/api/despesas`);
 
                 setDespesas(response.data);
             } catch (error) {
@@ -33,7 +28,10 @@ const Despesas = () => {
                     {
                         despesas.map((despesa) => (
                             <a key={despesa.id} href={despesa.link} target="_blank" rel="noopener noreferrer" className="rounded-xl bg-gray-200 h-[120px] flex flex-col justify-center items-center p-2 px-3 text-blue-800 text-md hover:scale-101 transition-all hover:bg-blue-300">
-                                <p>{despesa.numero} - {despesa.titulo}</p>
+                                <p>  {despesa.numero % 1 === 0
+                                    ? despesa.numero
+                                    : despesa.numero.toFixed(1)}
+                                    - {despesa.titulo} - {despesa.titulo}</p>
                                 <p className="text-sm lg:text-xs 2xl:text-sm">Acesse Aqui</p>
                             </a>
                         ))

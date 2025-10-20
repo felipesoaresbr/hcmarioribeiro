@@ -7,12 +7,12 @@ import { FaUserInjured, FaTruckMedical, FaBone, FaBaby } from "react-icons/fa6";
 
 const HomePage = () => {
     const [noticias, setNoticias] = useState([]);
-    const navigate = useNavigate(); // ✅ HOOK PARA NAVEGAR
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchNoticias = async () => {
             try {
-                const response = await axios.get(`${API_URL}/news.php?action=read`);
+                const response = await axios.get(`${API_URL}/news`);
                 setNoticias(response.data);
             } catch (error) {
                 console.error("Erro ao buscar notícias:", error);
@@ -28,7 +28,7 @@ const HomePage = () => {
                 <NewsBanner />
                 <div className="h-fit w-full px-5 sm:px-5 lg:px-40 2xl:px-70 mt-10">
                     <h1 className="text-2xl mb-5 text-blue-800">Mais notícias</h1>
-                    <div className="grid-cols-1 sm:grid-cols-1 lg:grid-cols-5 flex gap-4 flex-wrap flex-col">
+                    <div className="grid-cols-1 sm:grid-cols-1 lg:grid-cols-5 flex gap-4 flex-wrap">
                         {noticias.map((noticia) => (
                             <div
                                 key={noticia.id}

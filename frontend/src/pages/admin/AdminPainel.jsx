@@ -5,20 +5,11 @@ import CreateDespesas from "../../components/admin/CreateDespesas";
 import { useState, useEffect } from "react";
 import EditDespesas from "../../components/admin/EditDespesas";
 
-
 const AdminPainel = () => {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showNewsListModal, setShowNewsListModal] = useState(false);
     const [showCreateDespesasModal, setCreateDespesasModal] = useState(false);
     const [showEditDespesasModal, setEditDespesasModal] = useState(false);
-
-    const[csrfToken, setCsrfToken] = useState("");
-
-    useEffect(() => {
-      setCsrfToken(sessionStorage.getItem("csrf_token")) ;
-    }, []);
-
-    console.log(csrfToken);
 
     const openCreateModal = () => setShowCreateModal(true);
     const closeCreateModal = () => setShowCreateModal(false);
@@ -70,23 +61,23 @@ const AdminPainel = () => {
                 {user?.permissao === "S" && (
                     <div className="flex flex-col items-center text-slate-700">
 
-                        <button 
+                        <button
                             onClick={openCreateDespesasModal}
                             className="flex flex-col items-center p-4 justify-center cursor-pointer hover:scale-105 transition-all"
-                            >
+                        >
                             <FaFileContract className="text-6xl" />
                             <p className="text-xl">Nova Despesa</p>
                         </button>
 
                     </div>
                 )}
-                                {user?.permissao === "S" && (
+                {user?.permissao === "S" && (
                     <div className="flex flex-col items-center text-slate-700">
 
-                        <button 
+                        <button
                             onClick={openEditDespesasModal}
                             className="flex flex-col items-center p-4 justify-center cursor-pointer hover:scale-105 transition-all"
-                            >
+                        >
                             <FaRegPenToSquare className="text-6xl" />
                             <p className="text-xl">Editar despesas</p>
                         </button>

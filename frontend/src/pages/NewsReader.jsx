@@ -16,14 +16,14 @@ const NewsReader = () => {
     const fetchNews = async () => {
       try {
         const response = await axios.get(
-          `${API_URL}/news.php?action=read&id=${id}`
+          `${API_URL}/news/${id}`
         );
-        
+
         if (response.data) {
           setNews(response.data);
-          
+
           const allNews = await axios.get(
-            `${API_URL}/news.php?action=read`
+            `${API_URL}/news`
           );
           setRelatedNews(
             allNews.data
@@ -57,7 +57,7 @@ const NewsReader = () => {
     return (
       <main className="py-10 px-5 sm:px-5 lg:px-40 2xl:px-70 flex flex-col items-center justify-center">
         <p className="text-red-600">{error}</p>
-        <button 
+        <button
           onClick={() => navigate('/news')}
           className="mt-4 px-4 py-2 bg-blue-900 text-white rounded hover:bg-blue-800"
         >
@@ -71,7 +71,7 @@ const NewsReader = () => {
     return (
       <main className="py-10 px-5 sm:px-5 lg:px-40 2xl:px-70 flex flex-col items-center justify-center">
         <p className="text-slate-700">Notícia não encontrada</p>
-        <button 
+        <button
           onClick={() => navigate('/news')}
           className="mt-4 px-4 py-2 bg-blue-900 text-white rounded hover:bg-blue-800"
         >
@@ -90,44 +90,45 @@ const NewsReader = () => {
               {news.titulo}
             </h1>
             <h2 className="text-sm tracking-wide text-gray-400 flex flex-row items-center gap-2">
-              <FaCalendar className="text-slate-500 text-md"/>
+              <FaCalendar className="text-slate-500 text-md" />
               {new Date(news.publicacao).toLocaleDateString("pt-BR", {
                 day: "2-digit",
                 month: "long",
                 year: "numeric",
               })}
             </h2>
+
           </header>
-          
+
           {news.image && (
             <div className="mb-6 w-full h-64 sm:h-80 md:h-120 overflow-hidden rounded-lg">
-              <img 
-                src={`${API_URL}/${news.image}`} 
+              <img
+                src={`${API_URL}/${news.image}`}
                 alt={news.titulo}
                 className="w-full h-full object-cover"
               />
             </div>
           )}
-          
-          <div 
+
+          <div
             className="text-md text-justify text-slate-700 whitespace-pre-wrap"
             dangerouslySetInnerHTML={{ __html: news.descricao }}
           />
         </section>
-        
+
         <footer className="w-full lg:w-2/3 self-center pt-8">
           <h3 className="text-xl tracking-wide text-blue-800 mb-6">Leia mais</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {relatedNews.map((item) => (
-              <div 
+              <div
                 key={item.id}
                 className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
                 onClick={() => navigate(`/news/${item.id}`)}
               >
                 {item.image && (
                   <div className="h-40 overflow-hidden">
-                    <img 
-                      src={`${API_URL}/${item.image}`} 
+                    <img
+                      src={`${API_URL}/${item.image}`}
                       alt={item.titulo}
                       className="w-full h-full object-cover"
                     />

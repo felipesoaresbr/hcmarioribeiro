@@ -1,5 +1,6 @@
 import { FaNewspaper, FaXmark, FaImage } from "react-icons/fa6";
 import { useRef, useState, useEffect } from "react";
+import axios from "axios";
 import { RichTextEditor } from "@mantine/tiptap";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -11,20 +12,7 @@ const CreateNews = ({ onClose, existingNews, onSuccess }) => {
   const [highlight, setHighlight] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [csrfToken, setCsrfToken] = useState("");
 
-  // ✅ Recupera o CSRF token da sessão (gerado no login)
-  useEffect(() => {
-    const storedToken = sessionStorage.getItem("csrf_token");
-    if (storedToken) {
-      setCsrfToken(storedToken);
-    } else {
-      console.error("Token CSRF não encontrado. Atualize a página.");
-      alert("Erro de segurança: Token CSRF não carregado. Faça login novamente.");
-    }
-  }, []);
-
-  // Editor de texto
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -42,7 +30,6 @@ const CreateNews = ({ onClose, existingNews, onSuccess }) => {
     content: existingNews?.descricao || "<p></p>",
   });
 
-  // Preenche dados caso esteja editando
   useEffect(() => {
     if (existingNews) {
       setTitle(existingNews.titulo);
@@ -52,6 +39,55 @@ const CreateNews = ({ onClose, existingNews, onSuccess }) => {
       }
     }
   }, [existingNews]);
+
+  const getCsrfToken = async () => {
+    const res = await axios.get(`${API_URL}/csrf-token`, { withCredentials: true });
+    return res.data.csrfToken;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", editor?.getHTML() || "");
+    if (image) formData.append("image", image);
+    formData.append("highlight", highlight ? "S" : "N");
+
+    try {
+      const csrfToken = await getCsrfToken();
+      if (existingNews) {
+        formData.append("id", existingNews.id);
+        await axios.post(`${API_URL}/news/update/${existingNews}`, formData, {
+          withCredentials: true,
+          headers: { "X-CSRF-Token": csrfToken },
+        });
+
+        if (onSuccess) {
+          onSuccess({
+            id: existingNews.id,
+            titulo: title,
+            descricao: editor?.getHTML() || "",
+            image: image ? URL.createObjectURL(image) : existingNews.image,
+            publicacao: existingNews.publicacao,
+            destaque: highlight ? "S" : "N",
+          });
+        }
+      } else {
+        await axios.post(`${API_URL}/news/create`, formData, {
+          withCredentials: true,
+          headers: { "X-CSRF-Token": csrfToken },
+        });
+        onClose();
+      }
+
+    } catch (error) {
+      console.error("Erro ao publicar:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const fileInputRef = useRef(null);
 
@@ -69,72 +105,6 @@ const CreateNews = ({ onClose, existingNews, onSuccess }) => {
 
   const handleHighlightChange = (e) => {
     setHighlight(e.target.checked);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!csrfToken) {
-      alert("Erro de segurança: Token CSRF não carregado");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("description", editor?.getHTML() || "");
-      if (image) formData.append("image", image);
-      formData.append("highlight", highlight ? "S" : "N");
-
-      const url = existingNews
-        ? `${API_URL}/news.php?action=update`
-        : `${API_URL}/news.php?action=create`;
-
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "X-CSRF-Token": csrfToken, // envia o token CSRF da sessão
-        },
-        credentials: "include", // envia cookies de sessão
-        body: formData,
-      });
-
-      const text = await response.text();
-      let result;
-      try {
-        result = text ? JSON.parse(text) : {};
-      } catch (parseError) {
-        console.error("Resposta não é JSON:", parseError, text);
-        throw new Error("Resposta inválida do servidor");
-      }
-
-      if (!response.ok) {
-        throw new Error(result.message || `Erro do servidor (${response.status})`);
-      }
-
-      alert(result.message || "Operação realizada com sucesso");
-
-      if (existingNews && onSuccess) {
-        onSuccess({
-          id: existingNews.id,
-          titulo: title,
-          descricao: editor?.getHTML() || "",
-          image: image ? URL.createObjectURL(image) : existingNews.image,
-          publicacao: existingNews.publicacao,
-          destaque: highlight ? "S" : "N",
-        });
-      } else if (onSuccess) {
-        onSuccess();
-      }
-
-    } catch (error) {
-      console.error("Erro ao publicar:", error);
-      alert(error.message || "Erro ao processar notícia");
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   return (
@@ -237,18 +207,12 @@ const CreateNews = ({ onClose, existingNews, onSuccess }) => {
             <FaImage />
             {existingNews?.image ? "Alterar imagem" : "Escolher imagem"}
           </button>
-
           {imagePreview && (
             <div className="mt-2">
-              <img
-                src={imagePreview}
-                alt="Preview"
-                className="max-h-40 rounded object-contain"
-              />
+              <img src={imagePreview} alt="Preview" className="max-h-40 rounded object-contain" />
               <p className="text-sm text-gray-500 mt-1">Pré-visualização da imagem</p>
             </div>
           )}
-
           {existingNews?.image && !imagePreview && (
             <div className="mt-2">
               <img

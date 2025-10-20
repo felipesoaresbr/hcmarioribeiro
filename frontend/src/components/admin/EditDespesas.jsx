@@ -12,18 +12,15 @@ const EditDespesas = ({ onClose }) => {
 
   const timeoutRef = useRef(null);
 
-  // Função para pegar token do localStorage
-  const getToken = () => localStorage.getItem('token');
+  const getCsrfToken = async () => {
+    const res = await axios.get(`${API_URL}/csrf-token`, { withCredentials: true });
+    return res.data.csrfToken;
+  };
 
   useEffect(() => {
     const refreshDespesas = async () => {
       try {
-        const token = getToken();
-        const response = await axios.get(`${API_URL}/despesas.php?action=read`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(`${API_URL}/despesas`);
         setDespesas(response.data);
       } catch (error) {
         console.error("Erro ao buscar despesas:", error);
@@ -33,23 +30,18 @@ const EditDespesas = ({ onClose }) => {
 
     refreshDespesas();
 
-    // Cleanup caso componente desmonte (limpar timeout)
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, []); // executa só uma vez ao montar
+  }, []);
 
-  // Função para deletar despesa
   const handleDelete = async (id) => {
     if (confirmDelete === id) {
       try {
-        const token = getToken();
-        await axios.delete(`${API_URL}/despesas.php?action=delete`, {
-          data: { id },
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
+        const csrfToken = await getCsrfToken();
+        await axios.delete(`${API_URL}/despesas/delete/${id}`, {
+          withCredentials: true,
+          headers: { "X-CSRF-Token": csrfToken },
         });
         setDespesas((prev) => prev.filter((d) => d.id !== id));
         setConfirmDelete(null);
@@ -59,18 +51,15 @@ const EditDespesas = ({ onClose }) => {
       }
     } else {
       setConfirmDelete(id);
-      // Limpa o confirmDelete após 3s
       timeoutRef.current = setTimeout(() => setConfirmDelete(null), 3000);
     }
   };
 
-  // Função para abrir modal de edição
   const handleEdit = (despesa) => {
     setEditingDespesas(despesa);
     setShowEditModal(true);
   };
 
-  // Função para atualizar lista após edição
   const handleUpdateSuccess = (updatedDespesa) => {
     setDespesas((prev) =>
       prev.map((d) => (d.id === updatedDespesa.id ? updatedDespesa : d))
@@ -132,11 +121,10 @@ const EditDespesas = ({ onClose }) => {
                           ? "Confirmar exclusão?"
                           : "Excluir"
                       }
-                      className={`${
-                        confirmDelete === despesa.id
-                          ? "text-red-600"
-                          : "text-slate-600"
-                      } hover:scale-110 transition-all cursor-pointer`}
+                      className={`${confirmDelete === despesa.id
+                        ? "text-red-600"
+                        : "text-slate-600"
+                        } hover:scale-110 transition-all cursor-pointer`}
                       onClick={() => handleDelete(despesa.id)}
                       type="button"
                       aria-label={
