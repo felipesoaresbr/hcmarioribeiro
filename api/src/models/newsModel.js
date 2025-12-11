@@ -2,13 +2,15 @@ import pool from "../db.js";
 
 export async function getAllNews() {
   try {
-    const [rows] = await pool.execute("SELECT * FROM noticias ORDER BY publicacao DESC"); // pega apenas rows
+    const [rows] = await pool.execute(
+      "SELECT * FROM noticias ORDER BY publicacao DESC"
+    );
     return rows;
   } catch (error) {
     console.error("Erro na query:", error);
     throw error;
   }
-};
+}
 
 export async function getNewsById(id) {
   try {
@@ -18,8 +20,7 @@ export async function getNewsById(id) {
     console.error("Erro na query", error);
     throw error;
   }
-};
-
+}
 
 export async function createNews(titulo, descricao, destaque, imagem) {
   try {
@@ -33,7 +34,7 @@ export async function createNews(titulo, descricao, destaque, imagem) {
     console.error("Erro na query", error);
     throw error;
   }
-};
+}
 
 export async function deleteNews(id) {
   try {
@@ -41,15 +42,24 @@ export async function deleteNews(id) {
     const [result] = await pool.execute(sql, [id]);
     return result.affectedRows;
   } catch (error) {
-    console.error("Erro na query", error)
+    console.error("Erro na query", error);
     throw error;
   }
-};
+}
 
-export async function updateNews(id, title, description, highlight) {
+export async function updateNews(id, title, description, highlight, image = null) {
   try {
-    const sql = `UPDATE noticias SET titulo = ?, descricao = ?, destaque = ? WHERE id = ?`;
-    const [result] = await pool.execute(sql, [title, description, highlight, id]);
+    let sql, params;
+
+    if (image) {
+      sql = `UPDATE noticias SET titulo = ?, descricao = ?, destaque = ?, image = ? WHERE id = ?`;
+      params = [title, description, highlight, image, id];
+    } else {
+      sql = `UPDATE noticias SET titulo = ?, descricao = ?, destaque = ? WHERE id = ?`;
+      params = [title, description, highlight, id];
+    }
+
+    const [result] = await pool.execute(sql, params);
     return result.affectedRows;
   } catch (error) {
     console.error("Erro na query", error);

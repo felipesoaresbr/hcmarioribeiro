@@ -58,20 +58,20 @@ const About = () => {
                             <header className="flex flex-row gap-2 text-2xl lg:text-xl 2xl:text-2xl font-semibold text-blue-600 items-center mb-5">
                                 <FaBullseye className="bg-[#004688] text-white p-0.5 rounded-sm" />Visão
                             </header>
-                            <p className="text-sm text-slate-800">Ser referência no atendimento humanizado e na assistência à saúde para todo o norte de Minas, sendo retaguarda para o Sistema Único de Saúde nos serviços da média e alta complexidade.</p>
+                            <p className="text-[15px] text-slate-800">Ser referência no atendimento humanizado e na assistência à saúde para todo o norte de Minas, sendo retaguarda para o Sistema Único de Saúde nos serviços da média e alta complexidade.</p>
                         </article>
 
                         <article className="h-fit w-full sm:w-full lg:w-1/3 sm:h-fit lg:h-[350px] 2xl:h-[400px] bg-white border border-gray-300 rounded-2xl p-5">
                             <header className="flex flex-row gap-2 text-2xl lg:text-xl 2xl:text-2xl font-semibold text-blue-600 items-center mb-5">
                                 <FaCompass className="bg-[#004688] text-white p-0.5 rounded-sm" />Missão
                             </header>
-                            <p className="text-sm text-slate-800">Prestar atendimento humanizado e de excelência à comunidade, praticando uma Medicina avançada para todos, com ações integradas de assistência social, saúde, ensino e pesquisa com vistas à melhoria da assistência à saúde, à educação no Norte de Minas.</p>
+                            <p className="text-[15px] text-slate-800">Prestar atendimento humanizado e de excelência à comunidade, praticando uma Medicina avançada para todos, com ações integradas de assistência social, saúde, ensino e pesquisa com vistas à melhoria da assistência à saúde, à educação no Norte de Minas.</p>
                         </article>
                         <article className="h-fit w-full sm:w-full lg:w-1/3 sm:h-fit lg:h-[350px] 2xl:h-[400px] bg-white border border-gray-300 rounded-2xl p-5">
                             <header className="flex flex-row gap-2 text-2xl lg:text-xl 2xl:text-2xl font-semibold text-blue-600 items-center mb-5">
                                 <FaScaleBalanced className="bg-[#004688] text-white p-0.5 rounded-sm" />Valores
                             </header>
-                            <p className="text-sm text-slate-800">
+                            <p className="text-[15px] text-slate-800">
                                 <ul className="space-y-1.5 text-md">
                                     <li>Postura Ética;</li>
                                     <li>Responsabilidade Social;</li>

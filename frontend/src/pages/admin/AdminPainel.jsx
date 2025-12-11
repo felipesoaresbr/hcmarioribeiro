@@ -2,7 +2,7 @@ import { FaNewspaper, FaEye, FaFileContract, FaRegPenToSquare } from "react-icon
 import CreateNews from "../../components/admin/CreateNews";
 import NewsList from "../../components/admin/NewsList";
 import CreateDespesas from "../../components/admin/CreateDespesas";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import EditDespesas from "../../components/admin/EditDespesas";
 
 const AdminPainel = () => {
@@ -23,18 +23,6 @@ const AdminPainel = () => {
     const openEditDespesasModal = () => setEditDespesasModal(true);
     const closeEditDespesasModal = () => setEditDespesasModal(false);
 
-    const [user, setUser] = useState(null);
-
-    useEffect(() => {
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-            try {
-                setUser(JSON.parse(storedUser));
-            } catch {
-                setUser(null);
-            }
-        }
-    }, []);
 
     return (
         <main className="bg-gray-50 w-screen h-screen flex items-center justify-center relative">
@@ -58,32 +46,26 @@ const AdminPainel = () => {
                         <p className="text-xl">Ver notícias</p>
                     </button>
                 </div>
-                {user?.permissao === "S" && (
-                    <div className="flex flex-col items-center text-slate-700">
 
-                        <button
-                            onClick={openCreateDespesasModal}
-                            className="flex flex-col items-center p-4 justify-center cursor-pointer hover:scale-105 transition-all"
-                        >
-                            <FaFileContract className="text-6xl" />
-                            <p className="text-xl">Nova Despesa</p>
-                        </button>
+                <div className="flex flex-col items-center text-slate-700">
+                    <button
+                        onClick={openCreateDespesasModal}
+                        className="flex flex-col items-center p-4 justify-center cursor-pointer hover:scale-105 transition-all"
+                    >
+                        <FaFileContract className="text-6xl" />
+                        <p className="text-xl">Nova Despesa</p>
+                    </button>
+                </div>
 
-                    </div>
-                )}
-                {user?.permissao === "S" && (
-                    <div className="flex flex-col items-center text-slate-700">
-
-                        <button
-                            onClick={openEditDespesasModal}
-                            className="flex flex-col items-center p-4 justify-center cursor-pointer hover:scale-105 transition-all"
-                        >
-                            <FaRegPenToSquare className="text-6xl" />
-                            <p className="text-xl">Editar despesas</p>
-                        </button>
-
-                    </div>
-                )}
+                <div className="flex flex-col items-center text-slate-700">
+                    <button
+                        onClick={openEditDespesasModal}
+                        className="flex flex-col items-center p-4 justify-center cursor-pointer hover:scale-105 transition-all"
+                    >
+                        <FaRegPenToSquare className="text-6xl" />
+                        <p className="text-xl">Editar despesas</p>
+                    </button>
+                </div>
             </section>
 
             <aside className={`${showCreateModal ? "flex" : "hidden"} w-full h-full absolute bg-black/30 justify-center items-center`}>
@@ -97,6 +79,7 @@ const AdminPainel = () => {
             <aside className={`${showCreateDespesasModal ? "flex" : "hidden"} w-full h-full absolute bg-black/30 justify-center items-center`}>
                 <CreateDespesas onClose={closeCreateDespesasModal} />
             </aside>
+
             <aside className={`${showEditDespesasModal ? "flex" : "hidden"} w-full h-full absolute bg-black/30 justify-center items-center`}>
                 <EditDespesas onClose={closeEditDespesasModal} />
             </aside>

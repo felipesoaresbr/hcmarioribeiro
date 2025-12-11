@@ -23,7 +23,7 @@ const NewsBanner = () => {
   useEffect(() => {
     const fetchNoticias = async () => {
       try {
-        const response = await axios.get(`${API_URL}/news/`);
+        const response = await axios.get(`${API_URL}/news`);
 
         const destaqueNoticias = response.data
           .filter((n) => n.destaque === "S")

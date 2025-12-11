@@ -9,7 +9,7 @@ const Despesas = () => {
         const fetchDespesas = async () => {
             try {
 
-                const response = await axios.get(`${API_URL}/api/despesas`);
+                const response = await axios.get(`${API_URL}/despesas`);
 
                 setDespesas(response.data);
             } catch (error) {

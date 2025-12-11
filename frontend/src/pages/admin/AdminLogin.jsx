@@ -12,35 +12,42 @@ const AdminLogin = () => {
     nome: "",
     senha: ""
   });
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const initCsrfToken = async () => {
       try {
         const res = await axios.get(`${API_URL}/csrf-token`);
         axios.defaults.headers.common["X-CSRF-Token"] = res.data.csrfToken;
-      } catch (e) {
-        console.error("Erro ao buscar CSRF token", e)
+      } catch {
+        setErrorMessage("Erro ao conectar ao servidor.");
       }
-    }
-
+    };
     initCsrfToken();
   }, []);
 
   axios.defaults.withCredentials = true;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios.post(`${API_URL}/login`, values)
-      .then(res => {
-        if (res.data.status === "Success") {
-          console.log(res.data.status);
-          navigate("/admin/painel")
-        } else {
-          alert(res.data.error);
-        }
-      })
-      .catch(err => console.log(err));
-  }
+    setErrorMessage("");
+
+    try {
+      const res = await axios.post(`${API_URL}/login`, values);
+
+      if (res.data.status === "Success") {
+        navigate("/admin/painel");
+      } else {
+        setErrorMessage(res.data.error || "Erro ao fazer login.");
+      }
+    } catch (err) {
+      if (err.response?.status === 401) {
+        setErrorMessage("Usuário ou senha incorretos.");
+      } else {
+        setErrorMessage("Ocorreu um erro ao tentar fazer login.");
+      }
+    }
+  };
 
   return (
     <main className="bg-gray-50 h-screen w-screen flex items-center justify-center">
@@ -56,6 +63,7 @@ const AdminLogin = () => {
               className='w-[90%] outline-none text-right'
               placeholder='Usuário'
               type='text'
+              value={values.nome}
               onChange={e => setValues({ ...values, nome: e.target.value })}
             />
           </div>
@@ -65,12 +73,18 @@ const AdminLogin = () => {
               className='w-[90%] outline-none text-right'
               placeholder='Senha'
               type='password'
+              value={values.senha}
               onChange={e => setValues({ ...values, senha: e.target.value })}
             />
           </div>
+
+          {errorMessage && (
+            <p className="text-red-600 text-center text-md">{errorMessage}</p>
+          )}
+
           <button
             type="submit"
-            className='cursor-pointer bg-gradient-to-l from-blue-700 to-blue-900 lg:p-4 2xl:p-5 text-white rounded-xl hover:scale-y-105 duration-300 mt-5'
+            className='cursor-pointer bg-gradient-to-l from-blue-700 to-blue-900 lg:p-4 2xl:p-5 text-white rounded-xl hover:scale-y-105 duration-300 mt-2'
           >
             Acessar
           </button>

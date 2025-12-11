@@ -41,7 +41,7 @@ const Footer = () => {
                         </div>
                     </div>
                 </div>
-                <span className="border-t sm:border-t lg:border-t-0 pt-3 sm:pt-3 lg:pt-0 border-blue-300 text-sm lg:text-xs 2xl:text-sm flex-col sm:flex-col flex lg:flex-row items-center justify-between text-center">Copyright © 2015-2025 Todos os direitos reservados ao Hospital das Clínicas Dr.Mário Ribeiro<span className="mt-3 sm:mt-3 lg:mt-0">Desenvolvido por Felipe Soares</span></span>
+                <span className="border-t sm:border-t lg:border-t-0 pt-3 sm:pt-3 lg:pt-0 border-blue-300 text-sm lg:text-xs 2xl:text-sm flex-col sm:flex-col flex lg:flex-row items-center justify-between text-center">Copyright © 2015-2025 Todos os direitos reservados ao Hospital das Clínicas Dr. Mário Ribeiro<span className="mt-3 sm:mt-3 lg:mt-0">Desenvolvido por Felipe Soares</span></span>
 
             </footer>
         </>

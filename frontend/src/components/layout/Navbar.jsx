@@ -72,7 +72,7 @@ const Navbar = ({ onHeightChange }) => {
                         ${isOpen ? 'max-h-screen' : 'max-h-0'}
                         flex flex-col sm:flex sm:flex-col lg:flex lg:flex-row
                         gap-0 sm:gap-0 lg:gap-5 2xl:gap-7
-                        text-md lg:text-md 2xl:text-lg text-blue-950 font-normal
+                        text-md lg:text-md 2xl:text-lg text-blue-950 font-semibold
                         transition-all duration-500 ease-out
                         
                         /* Comportamento mobile: menu fora do fluxo */
@@ -99,7 +99,7 @@ const Navbar = ({ onHeightChange }) => {
                             </div>
 
                             <ul className={`
-                                bg-white text-sm lg:rounded-lg lg:shadow-md 
+                                bg-white text-[15px] font-normal lg:rounded-lg lg:shadow-md 
                                 w-full sm:w-full lg:w-[200px] lg:border-gray-200
                                 lg:absolute 
                                 lg:left-0 z-50 text-nowrap 

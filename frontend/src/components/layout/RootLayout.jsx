@@ -21,7 +21,7 @@ const RootLayout = () => {
     };
 
     return (
-        <main className="min-h-screen max-w-screen overflow-x-hidden bg-gray-50 poppins no-scrollbar flex flex-col">
+        <main className="min-h-screen max-w-screen overflow-x-hidden bg-gray-50 font-[Work Sans] no-scrollbar flex flex-col">
             <Navbar onHeightChange={handleNavbarHeightChange} />
             <div className="flex-1" style={{ marginTop: `${navbarHeight}px` }}>
                 <Outlet />

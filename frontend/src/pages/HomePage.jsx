@@ -67,7 +67,7 @@ const HomePage = () => {
 
                 <div className="w-full px-5 sm:px-5 lg:px-40 2xl:px-70 mt-10 py-10 bg-gray-100 border-t border-gray-300 pb-10 mb-2">
                     <h1 className="text-2xl text-blue-800">Precisa de ajuda?</h1>
-                    <p className="my-4 text-slate-800">Contamos com uma gama diversificada de serviços <strong className="text-blue-800">24 horas</strong> para cuidar da sua saúde! Conheça algumas de nossas unidades 24h:</p>
+                    <p className="mb-6 mt-2 text-slate-800">Contamos com uma gama diversificada de serviços <strong className="text-blue-800">24 horas</strong> para cuidar da sua saúde! Conheça algumas de nossas unidades 24h:</p>
                     <section className="grid grid-cols-1 gap-5 text-blue-800">
                         <article className="bg-white border border-gray-200 p-6 rounded-lg sm:h-fit lg:h-[120px] 2xl:h-fit">
                             <header className="flex flex-row items-center gap-5 sm:gap-5 text-blue-800 lg:gap-0 justify-between sm:text-xl lg:text-lg 2xl:text-xl tracking-wider pb-2 border-b border-gray-300 mb-6">
